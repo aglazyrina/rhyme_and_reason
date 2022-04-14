@@ -2,6 +2,5 @@ prosodic
 pronouncing
 wordfreq
 torch
-string
 transformers
 re
