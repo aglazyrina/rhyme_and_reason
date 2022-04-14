@@ -3,4 +3,3 @@ pronouncing
 wordfreq
 torch
 transformers
-re
