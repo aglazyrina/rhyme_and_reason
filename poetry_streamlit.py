@@ -105,25 +105,28 @@ def get_match_list(line_options, meter, top_n = 5):
     that match the given meter
     """
     match_list = []
-    for current_line in line_options:
-        # predict some previous words
-        suggest_list = get_prediction_eos(current_line)
-        # exclude exceptions
-        suggest_list = [x for x in suggest_list if x != '...']
-        # only use top n suggestions
-        suggest_list = suggest_list[:top_n]
-        for suggest in suggest_list:
-            # add the suggestion to the current line
-            new_line = suggest + ' ' + current_line
-            # print(new_line)
-            # find the rhythmic structure of the new line
-            current_meter = get_meter(new_line)
-            # see if it matches the original meter
-            match = meter[-len(current_meter):] == current_meter
-            # if it does, add the new line to the match list
-            if match:
-                match_list.append(new_line)
-    return match_list
+    try:
+        for current_line in line_options:
+            # predict some previous words
+            suggest_list = get_prediction_eos(current_line)
+            # exclude exceptions
+            suggest_list = [x for x in suggest_list if x != '...']
+            # only use top n suggestions
+            suggest_list = suggest_list[:top_n]
+            for suggest in suggest_list:
+                # add the suggestion to the current line
+                new_line = suggest + ' ' + current_line
+                # print(new_line)
+                # find the rhythmic structure of the new line
+                current_meter = get_meter(new_line)
+                # see if it matches the original meter
+                match = meter[-len(current_meter):] == current_meter
+                # if it does, add the new line to the match list
+                if match:
+                    match_list.append(new_line)
+        return match_list
+    except Exception:
+        return match_list
 
 def get_full_matches(line_options, meter, top_n = 5, n_stop = 10):
     full_matches = []
