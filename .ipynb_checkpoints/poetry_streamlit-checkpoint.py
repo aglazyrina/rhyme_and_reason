@@ -143,10 +143,29 @@ def get_full_matches(line_options, meter, top_n = 5, n_stop = 10):
             #print(full_matches)
     return full_matches[:n_stop]
 
+def get_partial_matches(line_options, meter, top_n = 5, n_stop = 20, n_words = 2):
+    partial_matches = []
+    # start with initial options
+    matches_to_add = line_options
+    counter = 0
+    # check that some matches were found and the full match limit isn't reached
+    while matches_to_add != [] and counter < n_words:
+        # update the options list with the next word
+        matches_to_add = get_match_list(matches_to_add, meter, top_n)
+        counter+=1
+    return matches_to_add[:n_stop]
+
+def print_matches():
+    print('printing matches')
+    matches_1 = get_partial_matches(line_options=options_1, meter= meter_1, top_n = 5, n_stop = 20, n_words = n_words)
+    st.write(', '.join(matches_1))
+    
 st.title("Poet's assistant")
 
 #p.config['print_to_screen']=0 
 
+bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+bert_model = BertForMaskedLM.from_pretrained('bert-base-uncased').eval()
 
 line1 = st.text_input('First line', 'Nice to meet you, where you been?')
 
@@ -163,35 +182,15 @@ options_1 = st.multiselect(
      rhymes_1,
      [])
 
-if st.button('Get suggestions', key = line1):
-    bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    bert_model = BertForMaskedLM.from_pretrained('bert-base-uncased').eval()
+n_words = st.slider('Suggested words', 0, 10, 0, on_change = print_matches)
+
+matches_1 = get_partial_matches(line_options=options_1, meter= meter_1, top_n = 5, n_stop = 20, n_words = n_words)
+st.write(', '.join(matches_1))
     
+if st.button('Get full suggestions'):
     full_matches_1 = get_full_matches(line_options = options_1, meter = meter_1, top_n = 3, n_stop = 10)
     st.write(', '.join(full_matches_1))
     
-# line2 = st.text_input('Second line', 'I could show you incredible things')
-
-# st.write(get_meter_string(line2))
-
-# last_word_2 = get_last_word(line2)
-
-# rhymes_2 = get_list_of_rhymes(last_word_2, top_n = 20)
-
-# meter_2 = get_meter(line1)
-
-# options_2 = st.multiselect(
-#      'Choose some rhymes',
-#     rhymes_2,
-#      [])
-
-# if st.button('Get suggestions', key = line2):
-#     bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-#     bert_model = BertForMaskedLM.from_pretrained('bert-base-uncased').eval()
-    
-#     full_matches_2 = get_full_matches(line_options = options_2, meter = meter_2, top_n = 5, n_stop = 10)
-#     st.write(', '.join(full_matches_2))
-
     
 
 
