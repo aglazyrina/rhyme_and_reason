@@ -18,6 +18,9 @@ def get_list_of_rhymes(last_word, top_n = 20):
     """
     # get rhymes
     rhymes = pronouncing.rhymes(last_word)
+    # remove words with punctuation
+    rhymes = [x for x in rhymes if re.findall(r'[.?\-", ]+', x) == [] ]
+    rhymes = list(set(rhymes))
     # sort them by usage frequency
     rhymes_sorted = sorted(rhymes, key = lambda x: word_frequency(x, 'en'), reverse = True)
     # only return top_n rhymes
