@@ -150,6 +150,7 @@ def get_full_matches(line_options, meter, top_n = 5, n_stop = 10):
     return full_matches[:n_stop]
 
 def get_partial_matches(line_options, meter, top_n = 5, n_stop = 20, n_words = 2):
+    # TODO: Balance multiple rhymes
     partial_matches = []
     # start with initial options
     matches_to_add = line_options
@@ -159,12 +160,18 @@ def get_partial_matches(line_options, meter, top_n = 5, n_stop = 20, n_words = 2
         # update the options list with the next word
         matches_to_add = get_match_list(matches_to_add, meter, top_n)
         counter+=1
-    return matches_to_add[:n_stop]
+    # balance for different rhymes
+    final_list = []
+    if line_options != 0:
+        n_each = round(n_stop/len(line_options))
+    else: 
+        n_each = 0
+    for option in line_options:
+        match_list = [x for x in matches_to_add if x.endswith(option)]
+        final_list = final_list + match_list
+    return final_list
+#    return matches_to_add[:n_stop]
 
-def print_matches():
-    print('printing matches')
-    matches_1 = get_partial_matches(line_options=options_1, meter= meter_1, top_n = 5, n_stop = 20, n_words = n_words)
-    st.write(', '.join(matches_1))
     
 st.title("Poet's assistant")
 
@@ -179,6 +186,8 @@ st.write(get_meter_string(line1))
 
 last_word_1 = get_last_word(line1)
 
+# TODO: add n_rhymes slider
+
 rhymes_1 = get_list_of_rhymes(last_word_1, top_n = 20)
 
 meter_1 = get_meter(line1)
@@ -188,7 +197,7 @@ options_1 = st.multiselect(
      rhymes_1,
      [])
 
-n_words = st.slider('Suggested words', 0, 10, 0, on_change = print_matches)
+n_words = st.slider('Suggested words', 0, 10, 0)
 
 matches_1 = get_partial_matches(line_options=options_1, meter= meter_1, top_n = 5, n_stop = 20, n_words = n_words)
 st.write(', '.join(matches_1))
