@@ -177,9 +177,10 @@ st.title("Poet's assistant")
 
 # "with" notation
 with st.sidebar:
-    n_rhymes = st.slider('# rhymes to suggest', 0, 100, 20)
-    n_stop = st.slider('# line suggestions', 0, 100, 20)
-    top_n = st.slider('depth of search', 0, 20, 3)
+    st.write('Parameters')
+    n_rhymes = st.slider('# of rhymes to suggest', 0, 100, 20)
+    n_stop = st.slider('# of line suggestions', 0, 100, 20)
+    top_n = st.slider('search depth', 0, 20, 3)
     
 #p.config['print_to_screen']=0 
 
