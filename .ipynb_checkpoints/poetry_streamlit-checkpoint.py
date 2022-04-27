@@ -162,12 +162,12 @@ def get_partial_matches(line_options, meter, top_n = 5, n_stop = 20, n_words = 2
         counter+=1
     # balance for different rhymes
     final_list = []
-    if line_options != 0:
+    if line_options:
         n_each = round(n_stop/len(line_options))
     else: 
         n_each = 0
     for option in line_options:
-        match_list = [x for x in matches_to_add if x.endswith(option)]
+        match_list = [x for x in matches_to_add if x.endswith(option)][:n_each]
         final_list = final_list + match_list
     return final_list
 #    return matches_to_add[:n_stop]
@@ -175,6 +175,12 @@ def get_partial_matches(line_options, meter, top_n = 5, n_stop = 20, n_words = 2
     
 st.title("Poet's assistant")
 
+# "with" notation
+with st.sidebar:
+    n_rhymes = st.slider('# rhymes to suggest', 0, 100, 20)
+    n_stop = st.slider('# line suggestions', 0, 100, 20)
+    top_n = st.slider('depth of search', 0, 20, 3)
+    
 #p.config['print_to_screen']=0 
 
 bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -188,7 +194,7 @@ last_word_1 = get_last_word(line1)
 
 # TODO: add n_rhymes slider
 
-rhymes_1 = get_list_of_rhymes(last_word_1, top_n = 20)
+rhymes_1 = get_list_of_rhymes(last_word_1, top_n = n_rhymes)
 
 meter_1 = get_meter(line1)
 
@@ -199,11 +205,11 @@ options_1 = st.multiselect(
 
 n_words = st.slider('Suggested words', 0, 10, 0)
 
-matches_1 = get_partial_matches(line_options=options_1, meter= meter_1, top_n = 5, n_stop = 20, n_words = n_words)
+matches_1 = get_partial_matches(line_options=options_1, meter= meter_1, top_n = top_n, n_stop = n_stop, n_words = n_words)
 st.write(', '.join(matches_1))
     
 if st.button('Get full suggestions'):
-    full_matches_1 = get_full_matches(line_options = options_1, meter = meter_1, top_n = 3, n_stop = 10)
+    full_matches_1 = get_full_matches(line_options = options_1, meter = meter_1, top_n = top_n, n_stop = 10)
     st.write(', '.join(full_matches_1))
     
     
